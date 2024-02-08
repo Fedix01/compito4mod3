@@ -1,0 +1,16 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#topbar {
+    background-image: url('https://manybooks.net/sites/default/files/2018-07/bookstackssmall.jpg');
+}
+
+#search-bar {
+    width: 50%;
+    box-shadow: 0 0 5px hsl(0 0% 78%);
+    height: 55px;
+    border-radius: 100vw;
+}
