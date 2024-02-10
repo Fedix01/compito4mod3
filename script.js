@@ -11,7 +11,6 @@
 let searchBar = document.getElementById("search-bar");
 let searchBtn = document.getElementById("search-btn");
 
-let mySidebar = document.getElementById("mySidebar");
 
 let endpoint = "https://striveschool-api.herokuapp.com/books";
 searchBtn.addEventListener("click", () => {
@@ -28,11 +27,14 @@ function loadData() {
 
 
 function cycleRes(json) {
+    search(json)
     json.forEach(books => {
         console.log(books)
         createHtml(books)
-    });
-}
+
+    })
+};
+
 function createHtml(books) {
     // <div class="card" style="width: 18rem;">
     //   <img class="card-img-top" src="..." alt="Card image cap">
@@ -40,60 +42,53 @@ function createHtml(books) {
     //     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
     //   </div>
     // </div>
-
+    console.log(books)
     let container = document.getElementById("search-output");
     let booksCards = document.createElement("div");
     booksCards.classList.add("card", "col-md-3", "justify-content-around");
-    let booksImg = document.createElement("img");
-    booksImg.src = books.img;
-    booksImg.style.height = "350px";
-    let titleCards = document.createElement("h3");
-    titleCards.innerText = books.title;
-    titleCards.classList.add("title");
-    let priceCards = document.createElement("h5");
-    priceCards.innerText = books.price;
-    let addToCart = document.createElement("button");
-    addToCart.classList.add("btn", "btn-outline-dark");
-    addToCart.innerText = "Aggiungi al carrello";
+    booksCards.innerHTML = ` <div class="card container-fluid" >
+       <img class="card-img-top" src="${books.img}" alt="Card image cap" style="height:350px">
+       <div class="card-body">
+         <p class="card-text title">${books.title}</p>
+         <p class="card-text">${books.price}</p>
+         <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
+       </div>
+     </div>`
+
 
     container.appendChild(booksCards);
 
-    booksCards.appendChild(booksImg);
-    booksCards.appendChild(titleCards);
-    booksCards.appendChild(priceCards);
-    booksCards.appendChild(addToCart);
 
 
-    addToCart.addEventListener("click", (event) => {
-        sideBar(event.target)
-    })
+
+    // addToCart.addEventListener("click", (event) => {
+    //    sideBar(event.target)
+    // })
+};
+
+function sideBar(titoli, btn) {
+    let card = btn.closest('.card');
+
+    console.log(titoli);
+    card.classList.add("clicked-book")
+
+    let sidebarCont = document.getElementById("sidebar-container");
+    sidebarCont.classList.add("openbtn", "text-light");
+    let mySidebar = document.getElementById("mySidebar");
+    let cartList = document.createElement("li");
+    cartList.classList.toggle("openbtn")
+    cartList.innerText = titoli;
+    mySidebar.appendChild(cartList)
+
 }
 
-function sideBar(btn) {
-    let cartCard = btn.parentNode;
+function search(libri) {
+    let valoreInput = searchBar.value;
+    let dataFilter = libri.filter((value) => {
+        return (
+            value.title.toLowerCase().includes(valoreInput.toLowerCase())
+        )
+    });
 
-    // let products = document.createElement("div");
-
-    // let cartImg = cartCard.querySelector("img");
-    // cartImg.style.width = "30px";
-    // cartImg.style.height = "30px";
-
-    // products.appendChild(cartImg);
-
-    let img = cartCard.querySelector("img");
-    img.style.height = "100px";
-
-    let cartBtn = cartCard.querySelector("button");
-    cartBtn.style.display = "none";
-
-    let cardText = cartCard.querySelector("h3");
-    cardText.style.fontSize = "20px";
-    cartCard.classList.remove("card", "col-md-3", "justify-content-around");
-    cartCard.classList.add("d-flex", "text-light")
-    console.log(cartCard)
-    mySidebar.classList.add("openbtn");
-    let newDiv = document.createElement("div");
-    // products.appendChild(cartCard)
-    // mySidebar.appendChild(products)
-    mySidebar.appendChild(cartCard)
+    console.log(dataFilter)
 }

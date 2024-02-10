@@ -52,5 +52,13 @@
     color: white;
     padding: 10px 15px;
     border: none; */
-    width: 230px;
+    width: 270px;
+}
+
+.card {
+    border: 0;
+}
+
+.clicked-book {
+    border: 2px solid red;
 }
