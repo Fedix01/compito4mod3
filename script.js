@@ -21,17 +21,22 @@ searchBtn.addEventListener("click", () => {
 function loadData() {
     fetch(`${endpoint}`)
         .then((res) => res.json())
-        .then((json) => cycleRes(json))
+        .then((json) => filterRes(json))
         .catch((err) => console.log(err))
 }
 
 
-function cycleRes(json) {
-    search(json)
-    json.forEach(books => {
+function filterRes(json) {
+    let valoreInput = searchBar.value.toLowerCase();
+    let dataFilter = json.filter((value) => {
+        return value.title.toLowerCase().includes(valoreInput)
+    });
+
+    let container = document.getElementById("search-output");
+    container.innerHTML = "";
+    dataFilter.forEach(books => {
         console.log(books)
         createHtml(books)
-
     })
 };
 
@@ -70,7 +75,7 @@ function sideBar(titoli, btn) {
     let card = btn.closest('.card');
 
     console.log(titoli);
-    card.classList.add("clicked-book")
+    card.classList.add("clicked-book");
 
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("openbtn", "text-light");
@@ -78,17 +83,13 @@ function sideBar(titoli, btn) {
     let cartList = document.createElement("li");
     cartList.classList.toggle("openbtn")
     cartList.innerText = titoli;
+
     mySidebar.appendChild(cartList)
 
 }
 
-function search(libri) {
-    let valoreInput = searchBar.value;
-    let dataFilter = libri.filter((value) => {
-        return (
-            value.title.toLowerCase().includes(valoreInput.toLowerCase())
-        )
-    });
-
-    console.log(dataFilter)
+function empty() {
+    let myOl = document.getElementById("mySidebar");
+    myOl.innerHTML = "";
+    card.classList.remove("clicked-book");
 }

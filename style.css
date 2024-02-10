@@ -62,3 +62,9 @@
 .clicked-book {
     border: 2px solid red;
 }
+
+.emptyCart {
+    position: absolute;
+    bottom: 10;
+    list-style: none;
+}
