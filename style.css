@@ -38,11 +38,7 @@
 }
 
 .closebtn {
-    position: absolute;
-    top: 0;
-    left: 25px;
-    font-size: 36px;
-    margin-right: 50px;
+    width: 0 !important;
 }
 
 .openbtn {
@@ -67,4 +63,12 @@
     position: absolute;
     bottom: 10;
     list-style: none;
+}
+
+.sidebar h3 {
+    margin-left: 15px;
+}
+
+#count {
+    margin-left: 15px;
 }

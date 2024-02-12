@@ -13,6 +13,10 @@ let searchBtn = document.getElementById("search-btn");
 
 
 let endpoint = "https://striveschool-api.herokuapp.com/books";
+searchBar.addEventListener("keydown", () => {
+    loadData()
+})
+
 searchBtn.addEventListener("click", () => {
     loadData();
 })
@@ -70,26 +74,36 @@ function createHtml(books) {
     //    sideBar(event.target)
     // })
 };
+let count = 0;
 
 function sideBar(titoli, btn) {
-    let card = btn.closest('.card');
+    let card = btn.parentNode.parentNode;
 
     console.log(titoli);
     card.classList.add("clicked-book");
 
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("openbtn", "text-light");
+    sidebarCont.classList.remove("closebtn");
     let mySidebar = document.getElementById("mySidebar");
     let cartList = document.createElement("li");
-    cartList.classList.toggle("openbtn")
+    cartList.classList.add("openbtn");
+    cartList.style.marginTop = "20px";
     cartList.innerText = titoli;
 
-    mySidebar.appendChild(cartList)
 
+    count++;
+    let counter = document.getElementById("count");
+    counter.textContent = `Il numero di articoli è ${count}`;
+
+
+    mySidebar.appendChild(cartList);
 }
 
 function empty() {
     let myOl = document.getElementById("mySidebar");
     myOl.innerHTML = "";
-    card.classList.remove("clicked-book");
+    let sidebarCont = document.getElementById("sidebar-container");
+    sidebarCont.classList.add("closebtn");
+    count = 0;
 }
