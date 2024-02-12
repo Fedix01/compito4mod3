@@ -11,8 +11,16 @@
 let searchBar = document.getElementById("search-bar");
 let searchBtn = document.getElementById("search-btn");
 
+let count = 0;
 
 let endpoint = "https://striveschool-api.herokuapp.com/books";
+
+let container = document.getElementById("search-output");
+
+const spinner = document.getElementById("spinner");
+
+
+
 searchBar.addEventListener("keydown", () => {
     loadData()
 })
@@ -23,25 +31,34 @@ searchBtn.addEventListener("click", () => {
 
 
 function loadData() {
+
+    spinner.classList.toggle("d-none");
+
     fetch(`${endpoint}`)
+
         .then((res) => res.json())
         .then((json) => filterRes(json))
         .catch((err) => console.log(err))
 }
 
+// Funzione aperta all'apertura della pagina
+loadData()
+
 
 function filterRes(json) {
     let valoreInput = searchBar.value.toLowerCase();
-    let dataFilter = json.filter((value) => {
-        return value.title.toLowerCase().includes(valoreInput)
+    let filteredResults = json.filter((books) => {
+        return books.title.toLowerCase().includes(valoreInput.trim())
     });
 
     let container = document.getElementById("search-output");
     container.innerHTML = "";
-    dataFilter.forEach(books => {
+    filteredResults.forEach(books => {
         console.log(books)
         createHtml(books)
     })
+    spinner.classList.toggle("d-none");
+
 };
 
 function createHtml(books) {
@@ -55,29 +72,26 @@ function createHtml(books) {
     let container = document.getElementById("search-output");
     let booksCards = document.createElement("div");
     booksCards.classList.add("card", "col-md-3", "justify-content-around");
-    booksCards.innerHTML = ` <div class="card container-fluid" >
+    booksCards.innerHTML =
+        ` <div class="card container-fluid" >
        <img class="card-img-top" src="${books.img}" alt="Card image cap" style="height:350px">
        <div class="card-body">
          <p class="card-text title">${books.title}</p>
          <p class="card-text">${books.price}</p>
-         <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
-       </div>
-     </div>`
-
+         <div class="d-flex">
+          <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
+          <button class="btn btn-outline-dark" onclick="deleteItem(this)">Cancella</button>
+          <button class="btn btn-outline-dark">Dettagli</button>
+         </div>
+        </div>
+     </div>`;
 
     container.appendChild(booksCards);
 
-
-
-
-    // addToCart.addEventListener("click", (event) => {
-    //    sideBar(event.target)
-    // })
 };
-let count = 0;
 
 function sideBar(titoli, btn) {
-    let card = btn.parentNode.parentNode;
+    let card = btn.parentNode.parentNode.parentNode;
 
     console.log(titoli);
     card.classList.add("clicked-book");
@@ -100,10 +114,27 @@ function sideBar(titoli, btn) {
     mySidebar.appendChild(cartList);
 }
 
+
+function deleteItem(btn) {
+    let card = btn.parentNode.parentNode.parentNode;
+    card.classList.add("d-none");
+}
+
 function empty() {
     let myOl = document.getElementById("mySidebar");
     myOl.innerHTML = "";
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("closebtn");
     count = 0;
+}
+
+function liveSearch() {
+    if (activeResults) {
+        let valoreInput = searchBar.value.toLowerCase();
+        let filteredResults = activeResults.filter((books) => {
+            return books.title.toLowerCase().includes(valoreInput.trim())
+        });
+
+        filterRes(filteredResults, false)
+    }
 }
