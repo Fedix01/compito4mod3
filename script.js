@@ -19,6 +19,7 @@ let container = document.getElementById("search-output");
 
 const spinner = document.getElementById("spinner");
 
+let activeCards;
 
 
 searchBar.addEventListener("keydown", () => {
@@ -72,29 +73,81 @@ function createHtml(books) {
     let container = document.getElementById("search-output");
     let booksCards = document.createElement("div");
     booksCards.classList.add("card", "col-md-3", "justify-content-around");
-    booksCards.innerHTML =
-        ` <div class="card container-fluid" >
-       <img class="card-img-top" src="${books.img}" alt="Card image cap" style="height:350px">
-       <div class="card-body">
-         <p class="card-text title">${books.title}</p>
-         <p class="card-text">${books.price}</p>
-         <div class="d-flex">
-          <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
-          <button class="btn btn-outline-dark" onclick="deleteItem(this)">Cancella</button>
-          <button class="btn btn-outline-dark">Dettagli</button>
-         </div>
-        </div>
-     </div>`;
+    // booksCards.innerHTML =
+    //     ` <div class="card container-fluid" >
+    //    <img class="card-img-top" src="${books.img}" alt="Card image cap" style="height:350px">
+    //    <div class="card-body">
+    //      <p class="card-text title">${books.title}</p>
+    //      <p class="card-text">${books.price}</p>
+    //      <div class="d-flex">
+    //       <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
+    //       <button class="btn btn-outline-dark" onclick="deleteItem(this)">Cancella</button>
+    //       <button class="btn btn-outline-dark">Dettagli</button>
+    //      </div>
+    //     </div>
+    //  </div>`;
+
+    let cardsCont = document.createElement("div");
+    cardsCont.classList.add("card", "container-fluid");
+    let cardImg = document.createElement("img");
+    cardImg.src = books.img;
+    cardImg.classList.add("card-img-top");
+    cardImg.style.height = "350px";
+    let cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+    let cardTitle = document.createElement("p");
+    cardTitle.classList.add("card-text", "title");
+    cardTitle.innerText = books.title;
+    let cardText = document.createElement("p");
+    cardText.classList.add("card-text");
+    cardText.innerText = books.price;
+    let buttonsDiv = document.createElement("div");
+    buttonsDiv.classList.add("d-flex");
+    let addCart = document.createElement("button");
+    addCart.classList.add("btn", "btn-outline-dark");
+    addCart.innerText = "Aggiungi al carrello";
+    addCart.addEventListener("click", () => {
+        sideBar(books.title, addCart)
+    })
+
+    let deleteBtn = document.createElement("button");
+    deleteBtn.innerText = "Scorri";
+    deleteBtn.classList.add("btn", "btn-outline-dark");
+    deleteBtn.addEventListener("click", () => {
+        deleteItems(deleteBtn)
+    })
+
+    let detailsBtn = document.createElement("button");
+    detailsBtn.classList.add("btn", "btn-outline-dark");
+    detailsBtn.innerText = "Dettagli";
+    detailsBtn.addEventListener("click", () => {
+        details(books.asin)
+    })
+
+
 
     container.appendChild(booksCards);
+
+    booksCards.appendChild(cardsCont);
+    cardsCont.appendChild(cardImg);
+    cardsCont.appendChild(cardBody);
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardText);
+    cardBody.appendChild(buttonsDiv);
+    buttonsDiv.appendChild(addCart);
+    buttonsDiv.appendChild(deleteBtn);
+    buttonsDiv.appendChild(detailsBtn);
+
+
 
 };
 
 function sideBar(titoli, btn) {
     let card = btn.parentNode.parentNode.parentNode;
 
+    activeCards = card;
     console.log(titoli);
-    card.classList.add("clicked-book");
+    activeCards.classList.add("clicked-book");
 
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("openbtn", "text-light");
@@ -104,6 +157,14 @@ function sideBar(titoli, btn) {
     cartList.classList.add("openbtn");
     cartList.style.marginTop = "20px";
     cartList.innerText = titoli;
+    let cartDelete = document.createElement("span");
+    cartDelete.classList.add("border", "ms-3")
+    cartDelete.innerText = "Elimina";
+    cartList.appendChild(cartDelete);
+    cartDelete.addEventListener("click", () => {
+        deleteClickedItem(cartDelete)
+
+    })
 
 
     count++;
@@ -115,7 +176,13 @@ function sideBar(titoli, btn) {
 }
 
 
-function deleteItem(btn) {
+function deleteClickedItem(btn) {
+    let parent = btn.parentNode;
+    count--;
+    parent.remove()
+}
+
+function deleteItems(btn) {
     let card = btn.parentNode.parentNode.parentNode;
     card.classList.add("d-none");
 }
@@ -126,15 +193,11 @@ function empty() {
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("closebtn");
     count = 0;
+    activeCards.classList.remove("clicked-book");
+
 }
 
-function liveSearch() {
-    if (activeResults) {
-        let valoreInput = searchBar.value.toLowerCase();
-        let filteredResults = activeResults.filter((books) => {
-            return books.title.toLowerCase().includes(valoreInput.trim())
-        });
-
-        filterRes(filteredResults, false)
-    }
+function details(id) {
+    let newPage = "details.html";
+    window.location.href = `${newPage}?id=${id} `;
 }
