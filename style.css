@@ -41,6 +41,11 @@
     width: 0 !important;
 }
 
+.icon {
+    font-size: 40px;
+    cursor: pointer;
+}
+
 .openbtn {
     /* font-size: 20px;
     cursor: pointer;
@@ -48,7 +53,7 @@
     color: white;
     padding: 10px 15px;
     border: none; */
-    width: 270px;
+    width: 600px;
 }
 
 .card {

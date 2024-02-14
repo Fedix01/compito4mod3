@@ -22,6 +22,7 @@ const spinner = document.getElementById("spinner");
 let activeCards;
 
 
+
 searchBar.addEventListener("keydown", () => {
     loadData()
 })
@@ -63,55 +64,46 @@ function filterRes(json) {
 };
 
 function createHtml(books) {
-    // <div class="card" style="width: 18rem;">
-    //   <img class="card-img-top" src="..." alt="Card image cap">
-    //   <div class="card-body">
-    //     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    //   </div>
-    // </div>
-    console.log(books)
+
     let container = document.getElementById("search-output");
     let booksCards = document.createElement("div");
     booksCards.classList.add("card", "col-md-3", "justify-content-around");
-    // booksCards.innerHTML =
-    //     ` <div class="card container-fluid" >
-    //    <img class="card-img-top" src="${books.img}" alt="Card image cap" style="height:350px">
-    //    <div class="card-body">
-    //      <p class="card-text title">${books.title}</p>
-    //      <p class="card-text">${books.price}</p>
-    //      <div class="d-flex">
-    //       <button class="btn btn-outline-dark" onclick="sideBar('${books.title}', this)">Aggiungi al carrello</button>
-    //       <button class="btn btn-outline-dark" onclick="deleteItem(this)">Cancella</button>
-    //       <button class="btn btn-outline-dark">Dettagli</button>
-    //      </div>
-    //     </div>
-    //  </div>`;
 
+    let bookId = books.asin;
+    console.log(bookId)
+    bookAsin = bookId;
     let cardsCont = document.createElement("div");
+    cardsCont.id = bookId;
     cardsCont.classList.add("card", "container-fluid");
     let cardImg = document.createElement("img");
     cardImg.src = books.img;
+
     cardImg.classList.add("card-img-top");
     cardImg.style.height = "350px";
+
     let cardBody = document.createElement("div");
     cardBody.classList.add("card-body");
+
     let cardTitle = document.createElement("p");
     cardTitle.classList.add("card-text", "title");
     cardTitle.innerText = books.title;
+
     let cardText = document.createElement("p");
     cardText.classList.add("card-text");
-    cardText.innerText = books.price;
+    cardText.innerText = books.price + "$";
+
     let buttonsDiv = document.createElement("div");
-    buttonsDiv.classList.add("d-flex");
+    buttonsDiv.classList.add("d-flex", "justify-content-center");
     let addCart = document.createElement("button");
+
     addCart.classList.add("btn", "btn-outline-dark");
-    addCart.innerText = "Aggiungi al carrello";
+    addCart.innerText = "Buy";
     addCart.addEventListener("click", () => {
-        sideBar(books.title, addCart)
+        sideBar(books.title, addCart, books.asin, books.img, books.price)
     })
 
     let deleteBtn = document.createElement("button");
-    deleteBtn.innerText = "Scorri";
+    deleteBtn.innerText = "Delete";
     deleteBtn.classList.add("btn", "btn-outline-dark");
     deleteBtn.addEventListener("click", () => {
         deleteItems(deleteBtn)
@@ -119,7 +111,7 @@ function createHtml(books) {
 
     let detailsBtn = document.createElement("button");
     detailsBtn.classList.add("btn", "btn-outline-dark");
-    detailsBtn.innerText = "Dettagli";
+    detailsBtn.innerText = "Details";
     detailsBtn.addEventListener("click", () => {
         details(books.asin)
     })
@@ -142,9 +134,9 @@ function createHtml(books) {
 
 };
 
-function sideBar(titoli, btn) {
+function sideBar(titoli, btn, asin, img, price) {
     let card = btn.parentNode.parentNode.parentNode;
-
+    let bookId = asin;
     activeCards = card;
     console.log(titoli);
     activeCards.classList.add("clicked-book");
@@ -153,17 +145,42 @@ function sideBar(titoli, btn) {
     sidebarCont.classList.add("openbtn", "text-light");
     sidebarCont.classList.remove("closebtn");
     let mySidebar = document.getElementById("mySidebar");
+
     let cartList = document.createElement("li");
+
+    let cartListIn = document.createElement("div");
+    cartListIn.classList.add("d-flex");
+    let cartImg = document.createElement("img");
+    cartImg.src = img;
+    cartImg.style.height = "100px";
+    cartImg.style.marginRight = "10px";
+
+    let cartTitle = document.createElement("span");
+    cartTitle.innerText = titoli;
+
+    let cartPrice = document.createElement("span");
+    cartPrice.innerText = price + "$";
+    cartPrice.style.marginLeft = "10px";
+
+
+    let iconSide = document.querySelector(".icon");
+    iconSide.addEventListener("click", () => {
+        sidebarCont.classList.add("closebtn")
+    })
+
+    cartList.appendChild(cartImg);
+    cartList.appendChild(cartTitle);
+    cartList.appendChild(cartPrice);
     cartList.classList.add("openbtn");
     cartList.style.marginTop = "20px";
-    cartList.innerText = titoli;
+
     let cartDelete = document.createElement("span");
-    cartDelete.classList.add("border", "ms-3")
+    cartDelete.classList.add("border", "ms-3");
+    cartDelete.style.cursor = "pointer";
     cartDelete.innerText = "Elimina";
     cartList.appendChild(cartDelete);
     cartDelete.addEventListener("click", () => {
-        deleteClickedItem(cartDelete)
-
+        deleteClickedItem(cartDelete, bookId);
     })
 
 
@@ -173,16 +190,32 @@ function sideBar(titoli, btn) {
 
 
     mySidebar.appendChild(cartList);
+
 }
 
 
-function deleteClickedItem(btn) {
+
+function deleteClickedItem(btn, bookId) {
     let parent = btn.parentNode;
+    let myCard = activeCards;
+
+
+    myCard = document.getElementById(bookId);
+    myCard.classList.remove("clicked-book");
+    console.log(bookId)
+
+
+    parent.remove();
     count--;
-    parent.remove()
+
+    let counter = document.getElementById("count");
+    counter.textContent = `Il numero di articoli è ${count}`;
+
 }
 
 function deleteItems(btn) {
+
+
     let card = btn.parentNode.parentNode.parentNode;
     card.classList.add("d-none");
 }
@@ -193,7 +226,11 @@ function empty() {
     let sidebarCont = document.getElementById("sidebar-container");
     sidebarCont.classList.add("closebtn");
     count = 0;
-    activeCards.classList.remove("clicked-book");
+
+    let books = document.querySelectorAll(".clicked-book");
+    books.forEach((book) => {
+        book.classList.remove("clicked-book")
+    })
 
 }
 
