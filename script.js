@@ -21,7 +21,7 @@ const spinner = document.getElementById("spinner");
 
 let activeCards;
 
-
+let allPrices = 0;
 
 searchBar.addEventListener("keydown", () => {
     loadData()
@@ -188,6 +188,12 @@ function sideBar(titoli, btn, asin, img, price) {
     let counter = document.getElementById("count");
     counter.textContent = `Il numero di articoli è ${count}`;
 
+
+    let totalPrices = document.getElementById("totalPrices");
+    totalPrices.classList.add("ms-3", "mt-4");
+    allPrices += price;
+    totalPrices.innerText = `Il totale è: ${allPrices}`;
+    sidebarCont.appendChild(totalPrices)
 
     mySidebar.appendChild(cartList);
 
